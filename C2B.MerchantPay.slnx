@@ -1,6 +1,6 @@
 <Solution>
-  <Project Path="PayFlow.API/PayFlow.API.csproj" />
   <Project Path="PayFlow.Application/PayFlow.Application.csproj" />
   <Project Path="PayFlow.Domain/PayFlow.Domain.csproj" />
   <Project Path="PayFlow.Infrastructure/PayFlow.Infrastructure.csproj" />
+  <Project Path="PayFlow.Presentation/PayFlow.Presentation.csproj" Id="b9de7b08-0e84-4b90-bb33-1e15c8c4ffa4" />
 </Solution>
