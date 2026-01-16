@@ -34,7 +34,8 @@ public sealed class C2BSimulator : IC2BSimulator
         string billRef,
         C2BTransactionType type)
     {
-        _logger?.LogInformation("Starting C2B Simulation - Phone: {Phone}, Amount: {Amount}", phone, amount);
+        _logger?.LogInformation(
+            "Starting C2B Simulation - Phone: {Phone}, Amount: {Amount}", phone, amount);
 
         var token = await _auth.GetAccessTokenAsync();
 
@@ -44,27 +45,41 @@ public sealed class C2BSimulator : IC2BSimulator
             C2BTransactionType.BuyGoods => "CustomerBuyGoodsOnline",
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };
-        // Parse the amount string to int
-        if (!int.TryParse(amount, out var parsedAmount))
+
+        if (!int.TryParse(_options.ShortCode.ToString(), out var parsedShortCode))
         {
-            throw new BusinessRuleException($"Invalid amount: {amount}");
+            throw new BusinessRuleException($"Invalid ShortCode in configuration: {_options.ShortCode}");
         }
+
+        if (!long.TryParse(phone?.Trim(), out var parsedPhone))
+        {
+            throw new BusinessRuleException($"Invalid phone number: {phone}");
+        }
+
+        if (!decimal.TryParse(amount?.Trim(), out var amountDecimal) || amountDecimal <= 0)
+        {
+            throw new BusinessRuleException($"Invalid amount: {amount}. Must be > 0.");
+        }
+        var parsedAmount = (int)amountDecimal;
 
         var payload = new
         {
-            ShortCode = _options.ShortCode.ToString(),
+            ShortCode = parsedShortCode,                   
             CommandID = commandId,
-            Amount = parsedAmount,
-            Msisdn = phone,
+            Amount = parsedAmount,                         
+            Msisdn = parsedPhone,     
             BillRefNumber = type == C2BTransactionType.PayBill ? billRef : null
         };
 
-        _logger?.LogInformation("Sending C2B request - ShortCode: {ShortCode}, CommandID: {CommandID}",
-            _options.ShortCode, commandId);
+        _logger?.LogInformation(
+            "Sending C2B request - ShortCode: {ShortCode}, CommandID: {CommandID}, Amount: {Amount}, Msisdn: {Msisdn}, BillRefNumber: {BillRefNumber}",
+            parsedShortCode, commandId, parsedAmount, parsedPhone, payload.BillRefNumber);
 
-        var request = new HttpRequestMessage(HttpMethod.Post, _options.SimulateUrl);
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        request.Content = JsonContent.Create(payload);
+        var request = new HttpRequestMessage(HttpMethod.Post, _options.SimulateUrl)
+        {
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer", token) },
+            Content = JsonContent.Create(payload)
+        };
 
         var response = await _http.SendAsync(request);
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -74,7 +89,8 @@ public sealed class C2BSimulator : IC2BSimulator
 
         if (!response.IsSuccessStatusCode)
         {
-            _logger?.LogError("C2B Simulation failed: {StatusCode} - {Response}", response.StatusCode, responseContent);
+            _logger?.LogError(
+                "C2B Simulation failed: {StatusCode} - {Response}", response.StatusCode, responseContent);
             throw new HttpRequestException(
                 $"C2B Simulation failed with status {response.StatusCode}: {responseContent}");
         }
