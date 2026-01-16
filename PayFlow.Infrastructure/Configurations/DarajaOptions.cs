@@ -1,5 +1,7 @@
 ﻿
 
+using static System.Net.WebRequestMethods;
+
 namespace PayFlow.Infrastructure.Configurations;
 
 public sealed class DarajaOptions

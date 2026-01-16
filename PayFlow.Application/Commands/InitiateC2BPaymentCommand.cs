@@ -4,7 +4,7 @@ using PayFlow.Application.DTOs;
 namespace PayFlow.Application.Commands;
 
 public record InitiateC2BPaymentCommand(
-    decimal Amount,
+    string Amount,
     string PhoneNumber,
     string BillRef,
     C2BTransactionType Type,

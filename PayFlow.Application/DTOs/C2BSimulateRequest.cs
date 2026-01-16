@@ -3,7 +3,7 @@
 public sealed class C2BSimulateRequest
 {
     public string Phone { get; init; } = null!;
-    public decimal Amount { get; init; }
+    public string Amount { get; init; } = null!;
     public string BillRef { get; init; } = null!;
     public string C2BTransactionType { get; init; } = null!; 
     public string ShortCode { get; init; } = null!; 
