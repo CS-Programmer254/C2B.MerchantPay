@@ -23,6 +23,10 @@ public class MerchantConfiguration : IEntityTypeConfiguration<Merchant>
             .IsRequired()
             .HasMaxLength(50);
 
+        builder.Property(m => m.ShortCode)          
+            .IsRequired()
+            .HasMaxLength(20);
+
         builder.Property(m => m.IsActive)
             .IsRequired();
 
@@ -38,14 +42,21 @@ public class MerchantConfiguration : IEntityTypeConfiguration<Merchant>
         builder.Property(m => m.Version)
             .IsRowVersion()
             .IsConcurrencyToken();
+
+        // Relationship with KYC documents
         builder.HasMany(m => m.KycDocuments)
             .WithOne()
             .HasForeignKey(k => k.MerchantId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Indexes
         builder.HasIndex(m => m.Name);
         builder.HasIndex(m => m.MerchantType);
+        builder.HasIndex(m => m.ShortCode);         
         builder.HasIndex(m => m.IsActive);
         builder.HasIndex(m => m.CreatedAt);
+
+        // Ignore domain events
         builder.Ignore(m => m.DomainEvents);
     }
 }

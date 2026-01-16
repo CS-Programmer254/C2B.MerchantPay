@@ -10,7 +10,6 @@ namespace PayFlow.Infrastructure.Persistence;
 
 public class PayFlowDbContext : DbContext
 {
-    private readonly IPublisher _publisher;
     private IDbContextTransaction? _currentTransaction;
 
     public DbSet<Customer> Customers => Set<Customer>();
@@ -20,10 +19,9 @@ public class PayFlowDbContext : DbContext
     public DbSet<MerchantKycDocument> MerchantKycDocuments => Set<MerchantKycDocument>();
 
     public PayFlowDbContext(
-        DbContextOptions<PayFlowDbContext> options,
-        IPublisher publisher) : base(options)
+        DbContextOptions<PayFlowDbContext> options) : base(options)
     {
-        _publisher = publisher;
+    
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -107,12 +105,6 @@ public class PayFlowDbContext : DbContext
 
         // Save changes
         var result = await base.SaveChangesAsync(cancellationToken);
-
-        // Publish domain events after successful save
-        foreach (var domainEvent in domainEvents)
-        {
-            await _publisher.Publish(domainEvent, cancellationToken);
-        }
 
         // Clear domain events after publishing
         ChangeTracker.Entries<AggregateRoot<Guid>>()

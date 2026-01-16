@@ -4,8 +4,12 @@ namespace PayFlow.Domain.ValueObjects;
 
 public sealed class Money : ValueObject
 {
-    public decimal Amount { get; }
-    public string Currency { get; }
+    // EF Core needs public getter + private setter
+    public decimal Amount { get; private set; }
+    public string Currency { get; private set; } = null!;
+
+    // Parameterless constructor for EF Core
+    protected Money() { }
 
     public Money(decimal amount, string currency)
     {

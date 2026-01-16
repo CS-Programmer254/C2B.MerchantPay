@@ -5,8 +5,8 @@ namespace PayFlow.Domain.Entities;
 public class MerchantKycDocument : Entity<Guid>
 {
     public Guid MerchantId { get; private set; }
-    public string DocumentType { get; private set; }
-    public string DocumentNumber { get; private set; }
+    public string DocumentType { get; private set; } = null!;
+    public string DocumentNumber { get; private set; } = null!;
     public bool IsVerified { get; private set; }
 
     protected MerchantKycDocument() { }

@@ -2,10 +2,11 @@
 
 namespace PayFlow.Infrastructure.Configurations;
 
-public class DarajaOptions
+public sealed class DarajaOptions
 {
-    public string ShortCode { get; set; } = default!;
-    public string Password { get; set; } = default!;
-    public string CallbackUrl { get; set; } = default!;
-    public string StkPushUrl { get; set; } = default!;
+    public string ConsumerKey { get; init; } = null!;
+    public string ConsumerSecret { get; init; } = null!;
+    public int ShortCode { get; init; }
+    public string SimulateUrl { get; init; } = null!;
+    public string BaseUrl { get; init; } = null!;
 }

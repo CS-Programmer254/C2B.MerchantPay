@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PayFlow.Domain.Aggregates;
-using PayFlow.Domain.Enums;
 
 namespace PayFlow.Infrastructure.Persistence.Configurations;
 
@@ -25,6 +24,10 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.Status)
             .IsRequired()
             .HasConversion<string>()
+            .HasMaxLength(20);
+
+        builder.Property(p => p.InternalReferenceNumber)   
+            .IsRequired()
             .HasMaxLength(20);
 
         builder.Property(p => p.ExternalReference)
@@ -56,14 +59,17 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
                 .HasMaxLength(3);
         });
 
+        // Indexes
         builder.HasIndex(p => p.CustomerId);
         builder.HasIndex(p => p.MerchantId);
         builder.HasIndex(p => p.Status);
+        builder.HasIndex(p => p.InternalReferenceNumber);  
         builder.HasIndex(p => p.ExternalReference);
         builder.HasIndex(p => p.CreatedAt);
         builder.HasIndex(p => new { p.CustomerId, p.Status });
         builder.HasIndex(p => new { p.MerchantId, p.Status });
 
+        // Ignore domain events
         builder.Ignore(p => p.DomainEvents);
     }
 }

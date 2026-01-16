@@ -2,11 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PayFlow.Application.Interfaces;
+using PayFlow.Infrastructure.Daraja;
 using PayFlow.Infrastructure.Persistence;
 using PayFlow.Infrastructure.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PayFlow.Infrastructure.Extensions;
 
@@ -16,29 +14,21 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-       
-        services.AddDbContext<PayFlowDbContext>(options =>
+        services.AddDbContext<PayFlowDbContext>((provider, options) =>
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-
-            options.UseSqlServer(connectionString, sqlOptions =>
-            {
-                sqlOptions.EnableRetryOnFailure(
-                    maxRetryCount: 5,
-                    maxRetryDelay: TimeSpan.FromSeconds(30),
-                    errorNumbersToAdd: null);
-
-                sqlOptions.MigrationsAssembly(typeof(PayFlowDbContext).Assembly.FullName);
-            });
-
-     
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                                   ?? "Data Source=payflow.db"; 
+            options.UseSqlite(connectionString);
         });
+
 
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IWalletRepository, WalletRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IMerchantRepository, MerchantRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IC2BSimulator, C2BSimulator>();
+        services.AddScoped<IDarajaAuthService, DarajaAuthService>();
 
         return services;
     }

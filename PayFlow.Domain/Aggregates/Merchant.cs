@@ -5,8 +5,10 @@ namespace PayFlow.Domain.Aggregates;
 
 public class Merchant : AggregateRoot<Guid>
 {
-    public string Name { get; private set; }
-    public string MerchantType { get; private set; } 
+    public string Name { get; private set; } = null!;
+    public string MerchantType { get; private set; } = null!;
+    public string ShortCode { get; private set; } = null!;
+
     public bool IsActive { get; private set; }
 
     private readonly List<MerchantKycDocument> _kycDocuments = new();
@@ -14,10 +16,11 @@ public class Merchant : AggregateRoot<Guid>
 
     protected Merchant() { }
 
-    public Merchant(Guid id, string name, string type) : base(id)
+    public Merchant(Guid id, string name, string type, string shortCode) : base(id)
     {
         Name = name;
         MerchantType = type;
+        ShortCode = shortCode;
         IsActive = false;
     }
 
