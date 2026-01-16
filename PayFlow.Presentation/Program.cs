@@ -1,6 +1,9 @@
-using PayFlow.Application.Commands;
-using PayFlow.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.Extensions.Options;
+using PayFlow.Application.Commands;
+using PayFlow.Infrastructure.Configurations;
+using PayFlow.Infrastructure.Extensions;
+using PayFlow.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PayFlowDbContext>();
+    var daraja = scope.ServiceProvider.GetRequiredService<IOptions<DarajaOptions>>();
+
+    await DatabaseSeeder.SeedAsync(db, daraja);
+}
 
 if (app.Environment.IsDevelopment())
 {

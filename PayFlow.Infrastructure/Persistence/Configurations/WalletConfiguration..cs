@@ -18,12 +18,14 @@ public class WalletConfiguration : IEntityTypeConfiguration<Wallet>
         builder.Property(w => w.UpdatedAt);
         builder.Property(w => w.CreatedBy);
         builder.Property(w => w.UpdatedBy);
-        builder.Property(w => w.Version).IsRowVersion().IsConcurrencyToken();
 
-        // Owned type
+        builder.Property(w => w.Version)
+            .IsConcurrencyToken()
+            .HasDefaultValue(1); 
+
         builder.OwnsOne(w => w.Balance, balance =>
         {
-            balance.OwnsOne(b => b.Value); // EF Core auto maps Amount and Currency
+            balance.OwnsOne(b => b.Value);
         });
 
         builder.HasIndex(w => w.OwnerId).IsUnique();

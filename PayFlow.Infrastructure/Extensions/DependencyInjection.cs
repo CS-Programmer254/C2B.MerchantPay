@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PayFlow.Application.Interfaces;
+using PayFlow.Infrastructure.Configurations;
 using PayFlow.Infrastructure.Daraja;
 using PayFlow.Infrastructure.Persistence;
 using PayFlow.Infrastructure.Persistence.Repositories;
@@ -14,13 +15,20 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddOptions();
+
+        services.Configure<DarajaOptions>(
+            configuration.GetSection("Daraja")
+        );
+
         services.AddDbContext<PayFlowDbContext>((provider, options) =>
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection")
-                                   ?? "Data Source=payflow.db"; 
+            var connectionString =
+                configuration.GetConnectionString("DefaultConnection")
+                ?? "Data Source=payflow.db";
+
             options.UseSqlite(connectionString);
         });
-
 
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IWalletRepository, WalletRepository>();

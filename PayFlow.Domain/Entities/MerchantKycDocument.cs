@@ -11,14 +11,24 @@ public class MerchantKycDocument : Entity<Guid>
 
     protected MerchantKycDocument() { }
 
-    public MerchantKycDocument(Guid id, Guid merchantId, string type, string number)
+    public MerchantKycDocument(Guid id, Guid merchantId, string type, string number, bool isVerified = false)
         : base(id)
     {
+        if (string.IsNullOrWhiteSpace(type))
+            throw new BusinessRuleException("Document type cannot be empty");
+
+        if (string.IsNullOrWhiteSpace(number))
+            throw new BusinessRuleException("Document number cannot be empty");
+
         MerchantId = merchantId;
         DocumentType = type;
         DocumentNumber = number;
+        IsVerified = isVerified;
     }
 
+    /// <summary>
+    /// Marks the document as verified.
+    /// </summary>
     public void Verify()
     {
         IsVerified = true;

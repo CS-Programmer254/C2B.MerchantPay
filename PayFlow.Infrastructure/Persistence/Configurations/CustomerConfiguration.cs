@@ -11,9 +11,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.ToTable("Customers");
 
         builder.HasKey(c => c.Id);
-
-        builder.Property(c => c.Id)
-            .ValueGeneratedNever();
+        builder.Property(c => c.Id).ValueGeneratedNever();
 
         builder.Property(c => c.FullName)
             .IsRequired()
@@ -23,23 +21,18 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .IsRequired()
             .HasMaxLength(20);
 
-        builder.Property(c => c.CreatedAt)
-            .IsRequired();
-
+        builder.Property(c => c.CreatedAt).IsRequired();
         builder.Property(c => c.UpdatedAt);
-
         builder.Property(c => c.CreatedBy);
-
         builder.Property(c => c.UpdatedBy);
 
         builder.Property(c => c.Version)
-            .IsRowVersion()
-            .IsConcurrencyToken();
+            .IsConcurrencyToken()
+            .HasDefaultValue(1); 
 
-        builder.HasIndex(c => c.PhoneNumber)
-            .IsUnique();
-
+        builder.HasIndex(c => c.PhoneNumber).IsUnique();
         builder.HasIndex(c => c.CreatedAt);
+
         builder.Ignore(c => c.DomainEvents);
     }
 }

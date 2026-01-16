@@ -56,4 +56,6 @@ public sealed class C2BSimulator : IC2BSimulator
         var response = await _http.SendAsync(request);
         response.EnsureSuccessStatusCode();
     }
+    //public int GetShortCode()
+    //    => _options.ShortCode;
 }

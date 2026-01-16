@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PayFlow.Infrastructure.Persistence;
 
@@ -10,9 +11,11 @@ using PayFlow.Infrastructure.Persistence;
 namespace PayFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(PayFlowDbContext))]
-    partial class PayFlowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260116140950_second")]
+    partial class second
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
@@ -155,9 +158,8 @@ namespace PayFlow.Infrastructure.Migrations
 
                     b.Property<int>("Version")
                         .IsConcurrencyToken()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(1);
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -321,11 +323,15 @@ namespace PayFlow.Infrastructure.Migrations
                                         .HasColumnType("TEXT");
 
                                     b2.Property<decimal>("Amount")
-                                        .HasColumnType("TEXT");
+                                        .HasPrecision(18, 2)
+                                        .HasColumnType("TEXT")
+                                        .HasColumnName("Amount");
 
                                     b2.Property<string>("Currency")
                                         .IsRequired()
-                                        .HasColumnType("TEXT");
+                                        .HasMaxLength(3)
+                                        .HasColumnType("TEXT")
+                                        .HasColumnName("Currency");
 
                                     b2.HasKey("WalletBalanceWalletId");
 

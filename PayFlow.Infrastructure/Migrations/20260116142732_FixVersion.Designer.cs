@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PayFlow.Infrastructure.Persistence;
 
@@ -10,9 +11,11 @@ using PayFlow.Infrastructure.Persistence;
 namespace PayFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(PayFlowDbContext))]
-    partial class PayFlowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260116142732_FixVersion")]
+    partial class FixVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
